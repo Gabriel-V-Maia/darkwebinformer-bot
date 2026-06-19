@@ -5,12 +5,13 @@ import (
 	"os"
 
 	"darkwebinformer-bot/src/modules/envreader"
+	"darkwebinformer-bot/src/modules/rssreader"
+
 	"github.com/bwmarrin/discordgo"
 )
 
 func main() {
-	envreader.LoadEnv(".env")
-
+	envreader.LoadConfigs(".env")
 	token := os.Getenv("TOKEN")
 
 	dg, err := discordgo.New("Bot " + token)
@@ -28,6 +29,8 @@ func main() {
 	if err != nil {
 		fmt.Println("Error opening websocket to discord: ", err)
 	}
+
+	rssreader.GetRSS("https://darkwebinformer.com/rss", "latest.rss")
 
 	select {}
 }
