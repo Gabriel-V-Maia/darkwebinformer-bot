@@ -38,3 +38,7 @@ func LoadEnv(filepath string) error {
 
 	return scanner.Err()
 }
+
+func LoadConfigs(filename string) {
+	LoadEnv(filename)
+}
