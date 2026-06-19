@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"darkwebinformer-bot/src/modules/envreader"
+	"darkwebinformer-bot/src/modules/notifier"
 	"darkwebinformer-bot/src/modules/rssreader"
 
 	"github.com/bwmarrin/discordgo"
@@ -30,7 +31,19 @@ func main() {
 		fmt.Println("Error opening websocket to discord: ", err)
 	}
 
-	rssreader.GetRSS("https://darkwebinformer.com/rss", "latest.rss")
+	file, err := rssreader.GetRSS("https://darkwebinformer.com/rss", "latest.rss")
+
+	if err != nil {
+		fmt.Printf("Error getting rss content: %s", err)
+	}
+
+	defer file.Close()
+
+	matches, err := rssreader.ParseRSS(file)
+
+	// fmt.Println(matches)
+
+	notifier.SendEmbed(dg)
 
 	select {}
 }
