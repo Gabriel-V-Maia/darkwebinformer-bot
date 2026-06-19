@@ -27,5 +27,5 @@ func SendEmbed(session *discordgo.Session) {
 		Title: "I am an Embed",
 	}
 
-	session.ChannelMessageSendEmbed("1517180323044134912", embed)
+	session.ChannelMessageSendEmbed("999", embed)
 }
