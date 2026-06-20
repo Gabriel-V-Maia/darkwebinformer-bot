@@ -11,3 +11,6 @@ Você precisa de um .env dentro da pasta src/ com as seguintes variaveis
 TOKEN=<token do seu bot>
 CHANNEL_ID=<ID DO CANAL PARA NOTICIAS>
 ```
+
+Após isso, apenas `cd src/` e então rode via `go run .`
+
