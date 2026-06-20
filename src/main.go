@@ -14,6 +14,7 @@ import (
 func main() {
 	envreader.LoadConfigs(".env")
 	token := os.Getenv("TOKEN")
+	channelid := os.Getenv("CHANNEL_ID")
 
 	dg, err := discordgo.New("Bot " + token)
 
@@ -39,11 +40,16 @@ func main() {
 
 	defer file.Close()
 
-	matches, err := rssreader.ParseRSS(file)
+	posts, err := rssreader.ParseRSS(file)
 
-	// fmt.Println(matches)
+	for _, post := range posts {
+		if post.Title == "" || post.Title == "Dark Web Informer" {
+			continue
+		}
 
-	notifier.SendEmbed(dg)
+		notifier.SendEmbed(dg, channelid, post)
+
+	}
 
 	select {}
 }
