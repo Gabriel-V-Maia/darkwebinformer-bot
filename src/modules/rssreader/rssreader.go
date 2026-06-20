@@ -2,29 +2,45 @@ package rssreader
 
 import (
 	"bytes"
+	"encoding/xml"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
-	"regexp"
 )
 
-func ParseRSS(file *os.File) ([]string, error) {
+type RSS struct {
+	XMLName xml.Name `xml:"rss"`
+	Channel Channel  `xml:"channel"`
+}
+
+type Channel struct {
+	Title       string `xml:"title"`
+	Description string `xml:"description"`
+	Items       []Item `xml:"item"`
+}
+
+type Item struct {
+	Title       string `xml:"title"`
+	Description string `xml:"description"`
+	Category    string `xml:"category"`
+	Link        string `xml:"link"`
+	PubDate     string `xml:"pubDate"`
+}
+
+func ParseRSS(file *os.File) ([]Item, error) {
 	content, err := io.ReadAll(file)
 	if err != nil {
 		return nil, fmt.Errorf("error reading file: %w", err)
 	}
 
-	re := regexp.MustCompile(`<!\[CDATA\[(.*?)\]\]>`)
-	matches := re.FindAllStringSubmatch(string(content), -1)
-
-	var results []string
-
-	for _, match := range matches {
-		results = append(results, match[1])
+	var rss RSS
+	err = xml.Unmarshal(content, &rss)
+	if err != nil {
+		return nil, fmt.Errorf("error unmarshaling xml: %w", err)
 	}
 
-	return results, nil
+	return rss.Channel.Items, nil
 }
 
 func GetRSS(url string, filename string) (*os.File, error) {
